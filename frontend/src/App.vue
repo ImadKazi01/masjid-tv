@@ -1,30 +1,29 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+import TimeTable from "./components/TimeTable.vue";
+import Date from "./components/Date.vue";
 </script>
 
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div class="tv-display">
+    <Date class="date-component" />
+    <TimeTable class="timetable-component" />
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+<style lang="scss">
+.tv-display {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+
+  .date-component {
+    margin-left: auto;
+  }
+
+  .timetable-component {
+   margin-right: auto;
+    width: 100%;
+  }
 }
 </style>
