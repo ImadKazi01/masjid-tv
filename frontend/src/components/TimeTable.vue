@@ -10,7 +10,6 @@ async function fetchTimetable() {
     );
     if (!response.ok) throw new Error("Failed to fetch data");
     const data = await response.json();
-    console.log(data.data);
     times.value = data.data.slice(2).map((entry) => ({
       name: entry.Name,
       startTime: entry["Start Time"] ? formatTime(entry["Start Time"]) : "",
