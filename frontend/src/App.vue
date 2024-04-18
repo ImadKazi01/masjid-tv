@@ -19,6 +19,9 @@ import Date from "./components/Date.vue";
 
   .date-component {
     margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
   }
 
   .timetable-component {
