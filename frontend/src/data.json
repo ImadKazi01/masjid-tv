@@ -1,0 +1,19 @@
+[
+  {
+    "title": "The Shawshank Redemption",
+    "copy": "Two imprisoned guys bond over a number of years, finding solace and eventual redemption through acts of common decency.",
+    "image": "https://picsum.photos/seed/picsum/200/300"
+  },
+
+  {
+    "title": "The Godfather",
+    "copy": "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+    "image": "https://picsum.photos/seed/picsum/200/300"
+  },
+
+  {
+    "title": "The Dark Knight",
+    "copy": "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.",
+    "image": "https://picsum.photos/seed/picsum/200/300"
+  }
+]

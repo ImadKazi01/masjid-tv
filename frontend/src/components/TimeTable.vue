@@ -10,7 +10,7 @@ async function fetchTimetable() {
     );
     if (!response.ok) throw new Error("Failed to fetch data");
     const data = await response.json();
-    times.value = data.data.slice(2).map((entry) => ({
+    times.value = data.data.slice(3).map((entry) => ({
       name: entry.Name,
       startTime: entry["Start Time"] ? formatTime(entry["Start Time"]) : "",
       jamatTime: entry["Jamat Time"] ? formatTime(entry["Jamat Time"]) : "",
@@ -75,7 +75,7 @@ onMounted(() => {
     <table v-if="times.length">
       <thead>
         <tr>
-          <th>Salah</th>
+          <th></th>
           <th>Start Time</th>
           <th>Jamat Time</th>
         </tr>
@@ -83,8 +83,12 @@ onMounted(() => {
       <tbody>
         <tr v-for="time in times" :key="time.id">
           <td class="name">{{ time.name }}</td>
-          <td>{{ time.startTime }}</td>
-          <td class="jamat">{{ time.jamatTime || "" }}</td>
+          <td class="start" :class="time.name === 'Jummah' ? 'jamat' : ''">
+            {{ time.startTime }}
+          </td>
+          <td class="jamat">
+            {{ time.jamatTime || "" }}
+          </td>
         </tr>
       </tbody>
     </table>
@@ -93,44 +97,30 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .timetable-container {
-  max-width: 50%;
-  width: 100%;
+  display: flex;
+  width: 60%;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-
-  h2 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 20px;
-  }
 
   table {
     width: 100%;
-    height: 80vh;
+    height: 70vh;
     border-collapse: collapse;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: #2d9159;
+    color: white;
 
     thead {
       tr {
-        background-color: #007bff;
-        color: #ffffff;
-
         th {
-          padding: 10px;
-          border: 1px solid #007bff;
+          font-size: 1.5rem;
+          padding-top: 2rem;
         }
       }
     }
 
     tbody {
       tr {
-        &:nth-child(odd) {
-          background-color: #f2f2f2;
-          color: #333;
-        }
-
         td {
-          padding: 8px;
-          border: 1px solid #ddd;
+          font-size: 2.4rem;
         }
       }
     }

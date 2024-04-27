@@ -1,12 +1,16 @@
 <script setup>
 import TimeTable from "./components/TimeTable.vue";
 import Date from "./components/Date.vue";
+import News from "./components/News.vue";
 </script>
 
 <template>
   <div class="tv-display">
     <Date class="date-component" />
-    <TimeTable class="timetable-component" />
+    <section class="tv-display__body">
+      <TimeTable class="timetable-component" />
+      <News class="news-component" />
+    </section>
   </div>
 </template>
 
@@ -17,15 +21,10 @@ import Date from "./components/Date.vue";
   align-items: flex-start;
   justify-content: flex-start;
 
-  .date-component {
-    margin-left: auto;
+  &__body {
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-  }
-
-  .timetable-component {
-   margin-right: auto;
+    flex-direction: row;
+    justify-content: space-between;
     width: 100%;
   }
 }
