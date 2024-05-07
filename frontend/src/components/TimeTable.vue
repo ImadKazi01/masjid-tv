@@ -6,7 +6,7 @@ const times = ref([]);
 async function fetchTimetable() {
   try {
     const response = await fetch(
-      "https://script.googleusercontent.com/macros/echo?user_content_key=ASXOPfxON7PICP8dswC7DKS49Y1czjbThdAab31d9fL85ykT0L9Qwg6W4bpeV282vQ89RRHGNuohWMqUlVmVEuFhJQoQi2wyOJmA1Yb3SEsKFZqtv3DaNYcMrmhZHmUMWojr9NvTBuBLhyHCd5hHa2cy1fYhw-ptjotJHFe5-UkYfrZ-SsGsFINK7iIImb1jWNVU_IGfXKCcCZLSfRYC6uJ7_E8QeJqehtFGCy31_l7nl-_E56ncaRRXZqHQgsmyMXKfnN6wx2RSXWY044JlGpjz6loM1y2-&lib=MpdsG6ZlKXvlBlWo5rPhpDmE6ei3rOiSo"
+      "https://script.googleusercontent.com/macros/echo?user_content_key=EYt-iY7GV2zvrX9X07ELKluXbUkzx75DpUE_70bwtFwdxTXoRUOo_htxoUbA-NNqoDdZC9_Vvee1wfwTgI_4uNWb4_AMSJOzOJmA1Yb3SEsKFZqtv3DaNYcMrmhZHmUMWojr9NvTBuBLhyHCd5hHawDD7f-ZhjdUHo0eo4bAqwscOgQ_LEHiRqOxz3jNEaSzz5QBRU34F3h_6i07jeuS36ORojFJlsM9SAns65DBbiiGHg4Tv-3CrRRXZqHQgsmy0237Oe_IY2RSXWY044JlGpjz6loM1y2-&lib=MEDXf46DmJ1Z0zvQ5xfCtIWE6ei3rOiSo"
     );
     if (!response.ok) throw new Error("Failed to fetch data");
     const data = await response.json();
@@ -64,7 +64,7 @@ function scheduleFetches(fetchHours) {
 
 onMounted(() => {
   // Define the hours at which you want to fetch the data
-  const fetchHours = [3, 9, 13, 17, 21]; // 24-hour format
+  const fetchHours = [3, 9, 14, 19, 21]; // 24-hour format
   fetchTimetable(); // Fetch immediately on mount
   scheduleFetches(fetchHours);
 });
@@ -81,13 +81,39 @@ onMounted(() => {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="time in times" :key="time.id">
+        <tr
+          v-for="time in times"
+          :key="time.id"
+          :class="time.name === 'Jummah' ? 'jummah' : ''"
+        >
           <td class="name">{{ time.name }}</td>
-          <td class="start" :class="time.name === 'Jummah' ? 'jamat' : ''">
+          <td
+            v-if="time.startTime && !time.jamatTime"
+            class="jamat"
+            colspan="2"
+          >
             {{ time.startTime }}
           </td>
-          <td class="jamat">
-            {{ time.jamatTime || "" }}
+          <td
+            v-else-if="time.startTime === time.jamatTime"
+            class="jamat"
+            colspan="2"
+          >
+            {{ time.jamatTime }}
+          </td>
+          <td
+            v-else-if="time.startTime !== time.jamatTime"
+            class="start"
+            :class="time.name === 'Jummah' ? 'jummah' : ''"
+          >
+            {{ time.startTime }}
+          </td>
+          <td
+            v-if="time.startTime !== time.jamatTime"
+            class="jamat"
+            :class="time.name === 'Jummah' ? 'jummah' : ''"
+          >
+            {{ time.jamatTime }}
           </td>
         </tr>
       </tbody>
@@ -98,12 +124,12 @@ onMounted(() => {
 <style lang="scss" scoped>
 .timetable-container {
   display: flex;
-  width: 60%;
+  width: 40%;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 
   table {
     width: 100%;
-    height: 70vh;
+    height: auto;
     border-collapse: collapse;
     background: #2d9159;
     color: white;
@@ -127,8 +153,13 @@ onMounted(() => {
   }
 }
 
+.jummah {
+  background: #e8a318;
+}
+
 .name,
-.jamat {
+.jamat,
+.jummah {
   font-weight: bold;
 }
 </style>

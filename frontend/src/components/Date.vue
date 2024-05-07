@@ -8,9 +8,10 @@ const currentTime = ref("");
 function updateTime() {
   const now = new Date();
   currentTime.value = now.toLocaleTimeString("en-GB", {
-    hour: "2-digit",
+    hour: "numeric",
     minute: "2-digit",
     second: "2-digit",
+    hour12: true,
   });
 }
 
@@ -41,22 +42,23 @@ onMounted(async () => {
 
 <template>
   <header>
+    <div class="logo-container">
+      <!-- Add your logo here -->
+      <img
+        src="https://lh4.googleusercontent.com/expOpBdj-uNqbHT9vvk05MCALOr3-w41VPx19m8LmlKSCMMXrTMMzugZz4JsTpfmYyXATA=w16383"
+        class="lzy1Td"
+        role="img"
+        aria-label="Site home"
+        jsname="SwcDWb"
+      />
+      <span>Madni Jamia Masjid</span>
+    </div>
     <div class="date-time-container">
       <span class="date-time-container__time">{{ currentTime }}</span>
       <div class="date-time-container__date">
         <span>{{ date }}</span>
         <span>{{ hijri }}</span>
       </div>
-    </div>
-    <div class="logo-container">
-      <!-- Add your logo here -->
-      <img
-        src="https://lh3.googleusercontent.com/vxXmkhxYxt3JQpLUjyPsuYSbLyWVxhID295Q2iFUTJ79RqijTYUL2uulYjdPMroYO9N2KQ=w16383"
-        class="lzy1Td"
-        role="img"
-        aria-label="Site home"
-        jsname="SwcDWb"
-      />
     </div>
   </header>
 </template>
@@ -67,8 +69,9 @@ header {
   justify-content: space-between;
   align-items: center;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  height: 120px; /* Set the header height to 10% of the viewport height */
+  height: 150px; /* Set the header height to 10% of the viewport height */
   width: 100%;
+  background-color: #faf0e6;
 
   .date-time-container {
     display: flex;
@@ -78,12 +81,12 @@ header {
     width: 60%;
     text-align: center;
     gap: 1rem;
-    background: black;
     height: 100%; /* Make the date-time container fill the header height */
+    border-left: solid 1px black;
 
     span {
       display: block;
-      color: white;
+      color: black;
       margin: 0;
       padding: 0 2rem;
     }
@@ -91,7 +94,7 @@ header {
     &__date {
       display: flex;
       flex-direction: column;
-      font-size: 1.6rem;
+      font-size: 2.3rem;
       font-weight: 600;
       align-items: flex-end;
     }
@@ -99,21 +102,27 @@ header {
     &__time {
       font-size: 4rem;
       font-weight: bold;
+      text-transform: uppercase;
     }
   }
 
   .logo-container {
     display: flex;
-    background-color: white;
     width: 40%;
     justify-content: center;
     align-items: center;
-    height: 100%; /* Make the logo container fill the header height */
+    gap: 2rem;
+    height: 100%;
 
     img {
-      width: 100%; /* Make the logo image fill the width of its container */
-      max-width: 120px; /* Set a maximum width for the logo image */
-      height: auto; /* Maintain the aspect ratio of the logo image */
+      width: 100%;
+      max-width: 120px; 
+      height: auto;
+    }
+
+    span {
+      font-size: 2rem;
+      font-weight: bold;
     }
   }
 }

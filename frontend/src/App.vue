@@ -20,12 +20,14 @@ import News from "./components/News.vue";
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
+  height: 100vh;
 
   &__body {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
+    height: 100%;
   }
 }
 </style>
