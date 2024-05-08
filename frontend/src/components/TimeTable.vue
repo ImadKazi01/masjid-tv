@@ -135,14 +135,14 @@ onMounted(() => {
           <td
             v-else-if="time['Start Time'] !== time['Jamat Time']"
             class="start"
-            :class="time.Name === 'Jummah' ? 'jummah' : ''"
+            :class="time.Name === 'Jummah Khutbah' ? 'jummah' : ''"
           >
             {{ time["Start Time"] }}
           </td>
           <td
             v-if="time['Start Time'] !== time['Jamat Time']"
             class="jamat"
-            :class="time.Name === 'Jummah' ? 'jummah' : ''"
+            :class="time.Name === 'Jummah Khutbah' ? 'jummah' : ''"
           >
             {{ time["Jamat Time"] }}
           </td>
@@ -194,7 +194,8 @@ onMounted(() => {
 }
 
 .name,
-.jamat {
+.jamat,
+.jummah {
   font-weight: bold;
 }
 </style>
