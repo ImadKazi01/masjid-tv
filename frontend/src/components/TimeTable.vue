@@ -75,9 +75,8 @@ function formatTime(timeString) {
 
   const [hours, minutes] = timeString.split("T")[1].split(":");
   const hour = parseInt(hours, 10);
-  const suffix = hour >= 12 ? "PM" : "AM";
   const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
-  return `${formattedHour}:${minutes} ${suffix}`;
+  return `${formattedHour}:${minutes}`;
 }
 
 function isTimeActive(startTime, nextStartTime, currentTime) {
@@ -178,7 +177,7 @@ onMounted(() => {
     tbody {
       tr {
         td {
-          font-size: 2.2rem;
+          font-size: 2.7rem;
           text-align: center;
         }
 
