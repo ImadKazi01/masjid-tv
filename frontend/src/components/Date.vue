@@ -90,7 +90,7 @@ header {
       display: flex;
       flex-direction: column;
       font-size: 2.3rem;
-      font-weight: 600;
+      font-weight: bold;
       align-items: flex-end;
     }
 
