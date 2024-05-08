@@ -15,6 +15,7 @@ async function fetchTimetable() {
         "Fajr tomorrow",
         "Sunrise tomorrow",
         "Zohar today",
+        "Zohar tomorrow",
         "Asar today",
         "Maghrib today",
         "Isha today",
@@ -25,50 +26,53 @@ async function fetchTimetable() {
     times.value = filteredData;
     console.log("Data fetched at:", new Date().toLocaleTimeString());
 
-    // Schedule the next fetch after 5 minutes of each Jamat time
-    const nextFetchTime = getNextFetchTime(filteredData, currentTime.value);
-    const delay = nextFetchTime - currentTime.value;
-    setTimeout(fetchTimetable, delay);
+    // Schedule the next fetch based on specific times
+    scheduleNextFetch();
   } catch (error) {
     console.error("Error fetching timetable:", error);
   }
 }
 
-function getNextFetchTime(data, currentTime) {
-  const jamatTimes = data
+function scheduleNextFetch() {
+  const now = new Date();
+  const jamatTimes = times.value
     .filter((entry) => entry["Jamat Time"])
     .map((entry) => new Date(entry["Jamat Time"]));
 
-  const nextJamatTime = jamatTimes.find((time) => time > currentTime);
+  let nextFetchTime = null;
 
-  if (nextJamatTime) {
-    // Add 5 minutes to the next Jamat time
-    return new Date(nextJamatTime.getTime() + 5 * 60000);
+  for (const jamatTime of jamatTimes) {
+    const fetchTime = new Date(jamatTime);
+    fetchTime.setMinutes(fetchTime.getMinutes() + 5);
+
+    if (fetchTime > now) {
+      nextFetchTime = fetchTime;
+      break;
+    }
+  }
+
+  if (nextFetchTime) {
+    const delay = nextFetchTime - now;
+    setTimeout(fetchTimetable, delay);
   } else {
-    // If no more Jamat times today, fetch at midnight (start of the next day)
-    const midnight = new Date(currentTime);
-    midnight.setHours(24, 0, 0, 0);
-    return midnight;
+    // If no more Jamat times today, fetch immediately
+    fetchTimetable();
   }
 }
 
 const formattedTimes = computed(() => {
-  return times.value.map((entry, index) => {
+  return times.value.map((entry) => {
     const formattedStartTime = formatTime(entry["Start Time"]);
     const formattedJamatTime = formatTime(entry["Jamat Time"]);
-    const isActive = isTimeActive(
-      entry["Start Time"],
-      times.value[index + 1]?.["Start Time"],
-      currentTime.value
-    );
     return {
       ...entry,
       "Start Time": formattedStartTime,
       "Jamat Time": formattedJamatTime,
-      isActive,
     };
   });
 });
+
+console.log(formattedTimes);
 
 function formatTime(timeString) {
   if (!timeString) return "";
@@ -77,18 +81,6 @@ function formatTime(timeString) {
   const hour = parseInt(hours, 10);
   const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
   return `${formattedHour}:${minutes}`;
-}
-
-function isTimeActive(startTime, nextStartTime, currentTime) {
-  if (!startTime) return false;
-
-  const startDateTime = new Date(startTime);
-  const nextDateTime = nextStartTime
-    ? new Date(nextStartTime)
-    : new Date(startDateTime);
-  nextDateTime.setDate(nextDateTime.getDate() + 1); // Set next day if no more prayers today
-
-  return currentTime >= startDateTime && currentTime < nextDateTime;
 }
 
 onMounted(() => {
