@@ -27,10 +27,10 @@ const onSlideChange = (swiper) => {
 };
 
 const swiperConfig = {
-  autoplay: {
-    delay: 5000,
-    disableOnInteraction: false,
-  },
+  //autoplay: {
+  //  delay: 5000,
+  //  disableOnInteraction: false,
+  //},
   loop: true,
   slidesPerView: 1,
   modules: [Autoplay],
@@ -47,11 +47,9 @@ onMounted(fetchSlideshow);
     <Swiper v-bind="swiperConfig" @slideChange="onSlideChange">
       <SwiperSlide v-for="(item, index) in newsItems" :key="index">
         <div class="news-item">
-          <h3>{{ item.title }}</h3>
           <figure class="news-image">
             <img :src="item.image" :alt="item.title" />
           </figure>
-          <p v-if="item.copy">{{ item.copy }}</p>
         </div>
       </SwiperSlide>
     </Swiper>
@@ -74,8 +72,12 @@ onMounted(fetchSlideshow);
   text-align: center;
   gap: 1rem;
 
+  figure{
+    margin: 0;
+  }
+
   img {
-    max-width: 60%;
+    max-width: 100%;
     height: auto;
   }
 
