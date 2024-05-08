@@ -9,14 +9,11 @@ const currentBackgroundColor = ref("");
 
 async function fetchSlideshow() {
   try {
-    const response = await fetch(
-      "https://script.googleusercontent.com/macros/echo?user_content_key=Z08OKKoHWj367xFbLy6PWdzMIuvVGsK9WOtE6Yrs7CZv8xnk1IOM2dFkSD79irTaaEPUfrHleG21wfwTgI_4uPs8W3T-aFjFOJmA1Yb3SEsKFZqtv3DaNYcMrmhZHmUMWojr9NvTBuBLhyHCd5hHawDD7f-ZhjdUHo0eo4bAqwscOgQ_LEHiRqOxz3jNEaSzz5QBRU34F3h_6i07jeuS36ORojFJlsM9SAns65DBbiiGHg4Tv-3CrRRXZqHQgsmygP99UgJFxyTv13CxkcP5JJjz6loM1y2-&lib=MEDXf46DmJ1Z0zvQ5xfCtIWE6ei3rOiSo"
-    );
+    const response = await fetch(import.meta.env.VITE_GOOGLE_SLIDESHOW_API_URL);
     if (!response.ok) throw new Error("Failed to fetch data");
     const data = await response.json();
     newsItems.value = data.data;
     console.log("Slideshow fetched at:", new Date().toLocaleTimeString());
-    console.log("Data:", newsItems.value);
   } catch (error) {
     console.error("Error fetching news data:", error);
   }
@@ -78,7 +75,7 @@ onMounted(fetchSlideshow);
   gap: 1rem;
 
   img {
-    max-width: 70%;
+    max-width: 60%;
     height: auto;
   }
 
@@ -90,7 +87,7 @@ onMounted(fetchSlideshow);
   p {
     max-width: 75%;
     margin-top: 0.5rem;
-    font-size: 1.4rem;
+    font-size: 2.1rem;
     padding: 0 3rem;
   }
 }

@@ -1,78 +1,108 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 
 const times = ref([]);
+const currentTime = ref(new Date());
 
 async function fetchTimetable() {
   try {
-    const response = await fetch(
-      "https://script.googleusercontent.com/macros/echo?user_content_key=EYt-iY7GV2zvrX9X07ELKluXbUkzx75DpUE_70bwtFwdxTXoRUOo_htxoUbA-NNqoDdZC9_Vvee1wfwTgI_4uNWb4_AMSJOzOJmA1Yb3SEsKFZqtv3DaNYcMrmhZHmUMWojr9NvTBuBLhyHCd5hHawDD7f-ZhjdUHo0eo4bAqwscOgQ_LEHiRqOxz3jNEaSzz5QBRU34F3h_6i07jeuS36ORojFJlsM9SAns65DBbiiGHg4Tv-3CrRRXZqHQgsmy0237Oe_IY2RSXWY044JlGpjz6loM1y2-&lib=MEDXf46DmJ1Z0zvQ5xfCtIWE6ei3rOiSo"
-    );
+    const response = await fetch(import.meta.env.VITE_GOOGLE_TIMETABLE_API_URL);
     if (!response.ok) throw new Error("Failed to fetch data");
     const data = await response.json();
-    times.value = data.data.slice(3).map((entry) => ({
-      name: entry.Name,
-      startTime: entry["Start Time"] ? formatTime(entry["Start Time"]) : "",
-      jamatTime: entry["Jamat Time"] ? formatTime(entry["Jamat Time"]) : "",
-    }));
+
+    const filteredData = data.data.filter((entry) =>
+      [
+        "Fajr tomorrow",
+        "Sunrise tomorrow",
+        "Zohar today",
+        "Asar today",
+        "Maghrib today",
+        "Isha today",
+        "Jummah Khutbah",
+      ].includes(entry.Name)
+    );
+
+    times.value = filteredData;
     console.log("Data fetched at:", new Date().toLocaleTimeString());
+
+    // Schedule the next fetch after 5 minutes of each Jamat time
+    const nextFetchTime = getNextFetchTime(filteredData, currentTime.value);
+    const delay = nextFetchTime - currentTime.value;
+    setTimeout(fetchTimetable, delay);
   } catch (error) {
     console.error("Error fetching timetable:", error);
   }
 }
 
-function formatTime(dateTimeString) {
-  const timePart = dateTimeString.match(/T(\d{2}):(\d{2}):(\d{2})/);
-  if (!timePart) return ""; // Return empty if no match found
+function getNextFetchTime(data, currentTime) {
+  const jamatTimes = data
+    .filter((entry) => entry["Jamat Time"])
+    .map((entry) => new Date(entry["Jamat Time"]));
 
-  let hours = parseInt(timePart[1], 10);
-  const minutes = timePart[2];
+  const nextJamatTime = jamatTimes.find((time) => time > currentTime);
 
-  hours = hours % 12;
-  hours = hours || 12;
-
-  return `${hours.toString().padStart(2, "0")}:${minutes}`;
-}
-
-function msUntilNextTarget(targetHour) {
-  const now = new Date();
-  const target = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate(),
-    targetHour,
-    0,
-    0
-  );
-  if (now > target) {
-    target.setDate(target.getDate() + 1);
+  if (nextJamatTime) {
+    // Add 5 minutes to the next Jamat time
+    return new Date(nextJamatTime.getTime() + 5 * 60000);
+  } else {
+    // If no more Jamat times today, fetch at midnight (start of the next day)
+    const midnight = new Date(currentTime);
+    midnight.setHours(24, 0, 0, 0);
+    return midnight;
   }
-  return target - now;
 }
 
-// Set timeouts to fetch the data at specified hours
-function scheduleFetches(fetchHours) {
-  fetchHours.forEach((hour) => {
-    const msUntilFetch = msUntilNextTarget(hour);
-    setTimeout(() => {
-      fetchTimetable();
-      // Set interval to repeat every 24 hours
-      setInterval(fetchTimetable, 24 * 60 * 60 * 1000);
-    }, msUntilFetch);
+const formattedTimes = computed(() => {
+  return times.value.map((entry, index) => {
+    const formattedStartTime = formatTime(entry["Start Time"]);
+    const formattedJamatTime = formatTime(entry["Jamat Time"]);
+    const isActive = isTimeActive(
+      entry["Start Time"],
+      times.value[index + 1]?.["Start Time"],
+      currentTime.value
+    );
+    return {
+      ...entry,
+      "Start Time": formattedStartTime,
+      "Jamat Time": formattedJamatTime,
+      isActive,
+    };
   });
+});
+
+function formatTime(timeString) {
+  if (!timeString) return "";
+
+  const [hours, minutes] = timeString.split("T")[1].split(":");
+  const hour = parseInt(hours, 10);
+  const suffix = hour >= 12 ? "PM" : "AM";
+  const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
+  return `${formattedHour}:${minutes} ${suffix}`;
+}
+
+function isTimeActive(startTime, nextStartTime, currentTime) {
+  if (!startTime) return false;
+
+  const startDateTime = new Date(startTime);
+  const nextDateTime = nextStartTime
+    ? new Date(nextStartTime)
+    : new Date(startDateTime);
+  nextDateTime.setDate(nextDateTime.getDate() + 1); // Set next day if no more prayers today
+
+  return currentTime >= startDateTime && currentTime < nextDateTime;
 }
 
 onMounted(() => {
-  // Define the hours at which you want to fetch the data
-  const fetchHours = [3, 9, 14, 19, 21]; // 24-hour format
   fetchTimetable(); // Fetch immediately on mount
-  scheduleFetches(fetchHours);
+  setInterval(() => {
+    currentTime.value = new Date(); // Update current time every second
+  }, 1000);
 });
 </script>
 
 <template>
   <div class="timetable-container">
-    <table v-if="times.length">
+    <table v-if="formattedTimes.length">
       <thead>
         <tr>
           <th></th>
@@ -82,38 +112,40 @@ onMounted(() => {
       </thead>
       <tbody>
         <tr
-          v-for="time in times"
+          v-for="time in formattedTimes"
           :key="time.id"
-          :class="time.name === 'Jummah' ? 'jummah' : ''"
+          :class="{
+            jummah: time.Name === 'Jummah Khutbah',
+          }"
         >
-          <td class="name">{{ time.name }}</td>
+          <td class="name">{{ time.Name }}</td>
           <td
-            v-if="time.startTime && !time.jamatTime"
+            v-if="time['Start Time'] && !time['Jamat Time']"
             class="jamat"
             colspan="2"
           >
-            {{ time.startTime }}
+            {{ time["Start Time"] }}
           </td>
           <td
-            v-else-if="time.startTime === time.jamatTime"
+            v-else-if="time['Start Time'] === time['Jamat Time']"
             class="jamat"
             colspan="2"
           >
-            {{ time.jamatTime }}
+            {{ time["Jamat Time"] }}
           </td>
           <td
-            v-else-if="time.startTime !== time.jamatTime"
+            v-else-if="time['Start Time'] !== time['Jamat Time']"
             class="start"
-            :class="time.name === 'Jummah' ? 'jummah' : ''"
+            :class="time.Name === 'Jummah' ? 'jummah' : ''"
           >
-            {{ time.startTime }}
+            {{ time["Start Time"] }}
           </td>
           <td
-            v-if="time.startTime !== time.jamatTime"
+            v-if="time['Start Time'] !== time['Jamat Time']"
             class="jamat"
-            :class="time.name === 'Jummah' ? 'jummah' : ''"
+            :class="time.Name === 'Jummah' ? 'jummah' : ''"
           >
-            {{ time.jamatTime }}
+            {{ time["Jamat Time"] }}
           </td>
         </tr>
       </tbody>
@@ -146,20 +178,24 @@ onMounted(() => {
     tbody {
       tr {
         td {
-          font-size: 2.4rem;
+          font-size: 2.2rem;
+          text-align: center;
+        }
+
+        &.jummah {
+          background-color: #ffad1f; /* Change the color as desired */
+        }
+
+        .jamat-only {
+          text-align: center;
         }
       }
     }
   }
 }
 
-.jummah {
-  background: #e8a318;
-}
-
 .name,
-.jamat,
-.jummah {
+.jamat {
   font-weight: bold;
 }
 </style>

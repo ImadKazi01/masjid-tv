@@ -17,9 +17,7 @@ function updateTime() {
 
 onMounted(async () => {
   try {
-    const response = await fetch(
-      "https://script.googleusercontent.com/macros/echo?user_content_key=ASXOPfxON7PICP8dswC7DKS49Y1czjbThdAab31d9fL85ykT0L9Qwg6W4bpeV282vQ89RRHGNuohWMqUlVmVEuFhJQoQi2wyOJmA1Yb3SEsKFZqtv3DaNYcMrmhZHmUMWojr9NvTBuBLhyHCd5hHa2cy1fYhw-ptjotJHFe5-UkYfrZ-SsGsFINK7iIImb1jWNVU_IGfXKCcCZLSfRYC6uJ7_E8QeJqehtFGCy31_l7nl-_E56ncaRRXZqHQgsmyMXKfnN6wx2RSXWY044JlGpjz6loM1y2-&lib=MpdsG6ZlKXvlBlWo5rPhpDmE6ei3rOiSo"
-    );
+    const response = await fetch(import.meta.env.VITE_GOOGLE_TIMETABLE_API_URL);
     if (!response.ok) throw new Error("Failed to fetch data");
 
     const data = await response.json();
@@ -43,13 +41,10 @@ onMounted(async () => {
 <template>
   <header>
     <div class="logo-container">
-      <!-- Add your logo here -->
       <img
-        src="https://lh4.googleusercontent.com/expOpBdj-uNqbHT9vvk05MCALOr3-w41VPx19m8LmlKSCMMXrTMMzugZz4JsTpfmYyXATA=w16383"
-        class="lzy1Td"
-        role="img"
-        aria-label="Site home"
-        jsname="SwcDWb"
+        src="../assets/logo.svg"
+        alt="Madni Jamia Masjid Logo"
+        class="logo"
       />
       <span>Madni Jamia Masjid</span>
     </div>
@@ -116,7 +111,7 @@ header {
 
     img {
       width: 100%;
-      max-width: 120px; 
+      max-width: 120px;
       height: auto;
     }
 
