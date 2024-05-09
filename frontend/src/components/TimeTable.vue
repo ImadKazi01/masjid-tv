@@ -26,37 +26,36 @@ async function fetchTimetable() {
     times.value = filteredData;
     console.log("Data fetched at:", new Date().toLocaleTimeString());
 
-    // Schedule the next fetch based on specific times
-    scheduleNextFetch();
+    // Schedule the next page reload based on Jamat times
+    scheduleNextReload();
   } catch (error) {
     console.error("Error fetching timetable:", error);
   }
 }
 
-function scheduleNextFetch() {
+function scheduleNextReload() {
   const now = new Date();
   const jamatTimes = times.value
     .filter((entry) => entry["Jamat Time"])
     .map((entry) => new Date(entry["Jamat Time"]));
 
-  let nextFetchTime = null;
+  let nextReloadTime = null;
 
   for (const jamatTime of jamatTimes) {
-    const fetchTime = new Date(jamatTime);
-    fetchTime.setMinutes(fetchTime.getMinutes() + 5);
+    const reloadTime = new Date(jamatTime);
+    reloadTime.setMinutes(reloadTime.getMinutes() + 5);
 
-    if (fetchTime > now) {
-      nextFetchTime = fetchTime;
+    if (reloadTime > now) {
+      nextReloadTime = reloadTime;
       break;
     }
   }
 
-  if (nextFetchTime) {
-    const delay = nextFetchTime - now;
-    setTimeout(fetchTimetable, delay);
-  } else {
-    // If no more Jamat times today, fetch immediately
-    fetchTimetable();
+  if (nextReloadTime) {
+    const delay = nextReloadTime - now;
+    setTimeout(() => {
+      location.reload();
+    }, delay);
   }
 }
 
@@ -110,11 +109,7 @@ onMounted(() => {
           }"
         >
           <td class="name">{{ time.Name }}</td>
-          <td
-            v-if="time['Start Time'] && !time['Jamat Time']"
-            class="jamat"
-            colspan="2"
-          >
+          <td v-if="time['Start Time'] && !time['Jamat Time']" class="jamat" colspan="2">
             {{ time["Start Time"] }}
           </td>
           <td

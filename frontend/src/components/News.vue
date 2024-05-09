@@ -27,10 +27,10 @@ const onSlideChange = (swiper) => {
 };
 
 const swiperConfig = {
-  //autoplay: {
-  //  delay: 5000,
-  //  disableOnInteraction: false,
-  //},
+  autoplay: {
+   delay: 5000,
+   disableOnInteraction: false,
+  },
   loop: true,
   slidesPerView: 1,
   modules: [Autoplay],
