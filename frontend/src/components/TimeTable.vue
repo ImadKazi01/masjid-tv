@@ -12,7 +12,9 @@ async function fetchTimetable() {
 
     const filteredData = data.data.filter((entry) =>
       [
+        "Fajr today",
         "Fajr tomorrow",
+        "Sunrise today",
         "Sunrise tomorrow",
         "Zohar today",
         "Zohar tomorrow",
