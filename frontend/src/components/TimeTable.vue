@@ -40,27 +40,53 @@ async function fetchTimetable() {
 
 function scheduleNextReload() {
   const now = new Date();
+  const currentTime = now.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  });
+
   const jamatTimes = times.value
     .filter((entry) => entry["Jamat Time"])
-    .map((entry) => new Date(entry["Jamat Time"]));
+    .map((entry) => {
+      const [, time] = entry["Jamat Time"].split("T");
+      return time.slice(0, 8); // Extract the time portion in "HH:mm:ss" format
+    });
+
+  console.log("Current time:", currentTime); // Log the current time
 
   let nextReloadTime = null;
 
   for (const jamatTime of jamatTimes) {
-    const reloadTime = new Date(jamatTime);
-    reloadTime.setMinutes(reloadTime.getMinutes() + 5);
+    const [hours, minutes, seconds] = jamatTime.split(":");
+    const reloadTime = new Date(now);
+    reloadTime.setHours(hours);
+    reloadTime.setMinutes(minutes);
+    reloadTime.setSeconds(seconds);
+    reloadTime.setMilliseconds(0);
 
-    if (reloadTime > now) {
+    if (reloadTime < now) {
+      reloadTime.setDate(reloadTime.getDate() + 1); // If the reload time is earlier than the current time, set it to the next day
+    }
+
+    reloadTime.setMinutes(reloadTime.getMinutes() + 5); // Add 5 minutes to the reload time
+    if (nextReloadTime === null || reloadTime < nextReloadTime) {
       nextReloadTime = reloadTime;
-      break;
     }
   }
 
   if (nextReloadTime) {
     const delay = nextReloadTime - now;
+    console.log(
+      "Next reload scheduled at:",
+      nextReloadTime.toLocaleTimeString()
+    ); // Log the next reload time
     setTimeout(() => {
       location.reload();
     }, delay);
+  } else {
+    console.log("No reload scheduled."); // Log if no reload is scheduled
   }
 }
 
