@@ -48,11 +48,18 @@ onMounted(async () => {
       />
       <span>Madni Jamia Masjid</span>
     </div>
-    <div class="date-time-container">
+    <div class="date-time-container" v-if="date && hijri">
       <span class="date-time-container__time">{{ currentTime }}</span>
       <div class="date-time-container__date">
         <span>{{ date }}</span>
         <span>{{ hijri }}</span>
+      </div>
+    </div>
+    <div v-else class="skeleton-date-time">
+      <div class="skeleton-time"></div>
+      <div class="skeleton-date">
+        <div class="skeleton-date-item"></div>
+        <div class="skeleton-date-item"></div>
       </div>
     </div>
   </header>
@@ -119,6 +126,53 @@ header {
       font-size: 2rem;
       font-weight: bold;
     }
+  }
+
+  .skeleton-date-time {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 60%;
+    padding: 0 2rem;
+    text-align: center;
+    gap: 1rem;
+    height: 100%;
+    border-left: solid 1px black;
+
+    .skeleton-time {
+      width: 50%;
+      height: 4rem;
+      background-color: #f0f0f0;
+      animation: skeleton-loading 1.5s infinite;
+    }
+
+    .skeleton-date {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      width: 50%;
+      gap: 1rem;
+
+      .skeleton-date-item {
+        width: 80%;
+        height: 2.3rem;
+        background-color: #f0f0f0;
+        animation: skeleton-loading 1.5s infinite;
+      }
+    }
+  }
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-color: #f0f0f0;
+  }
+  50% {
+    background-color: #e0e0e0;
+  }
+  100% {
+    background-color: #f0f0f0;
   }
 }
 </style>

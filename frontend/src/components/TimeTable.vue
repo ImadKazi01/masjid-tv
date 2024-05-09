@@ -109,7 +109,11 @@ onMounted(() => {
           }"
         >
           <td class="name">{{ time.Name }}</td>
-          <td v-if="time['Start Time'] && !time['Jamat Time']" class="jamat" colspan="2">
+          <td
+            v-if="time['Start Time'] && !time['Jamat Time']"
+            class="jamat"
+            colspan="2"
+          >
             {{ time["Start Time"] }}
           </td>
           <td
@@ -136,6 +140,13 @@ onMounted(() => {
         </tr>
       </tbody>
     </table>
+    <div v-else class="skeleton-table">
+      <div class="skeleton-row" v-for="i in 5" :key="i">
+        <div class="skeleton-cell skeleton-name"></div>
+        <div class="skeleton-cell skeleton-start-time"></div>
+        <div class="skeleton-cell skeleton-jamat-time"></div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -155,7 +166,7 @@ onMounted(() => {
     thead {
       tr {
         th {
-          font-size: 1.5rem;
+          font-size: 1.8rem;
           padding-top: 2rem;
         }
       }
@@ -178,11 +189,31 @@ onMounted(() => {
       }
     }
   }
+
+  .skeleton-table {
+    width: 100%;
+    height: auto;
+    background-color: #f0f0f0;
+    animation: skeleton-loading 1.5s infinite;
+    margin: 2rem;
+  }
 }
 
 .name,
 .jamat,
 .jummah {
   font-weight: bold;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-color: #f0f0f0;
+  }
+  50% {
+    background-color: #e0e0e0;
+  }
+  100% {
+    background-color: #f0f0f0;
+  }
 }
 </style>

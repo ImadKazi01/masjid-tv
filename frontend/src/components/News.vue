@@ -44,7 +44,7 @@ onMounted(fetchSlideshow);
     class="news-container"
     :style="{ backgroundColor: currentBackgroundColor }"
   >
-    <Swiper v-bind="swiperConfig" @slideChange="onSlideChange">
+    <Swiper v-if="newsItems.length" v-bind="swiperConfig" @slideChange="onSlideChange">
       <SwiperSlide v-for="(item, index) in newsItems" :key="index">
         <div class="news-item">
           <figure class="news-image">
@@ -53,6 +53,9 @@ onMounted(fetchSlideshow);
         </div>
       </SwiperSlide>
     </Swiper>
+    <div v-else class="skeleton-news">
+      <div class="skeleton-image"></div>
+    </div>
   </div>
 </template>
 
@@ -91,6 +94,33 @@ onMounted(fetchSlideshow);
     margin-top: 0.5rem;
     font-size: 2.1rem;
     padding: 0 3rem;
+  }
+}
+
+.skeleton-news {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+
+  .skeleton-image {
+    width: 100%;
+    height: 100%;
+    background-color: #f0f0f0;
+    animation: skeleton-loading 1.5s infinite;
+  }
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-color: #f0f0f0;
+  }
+  50% {
+    background-color: #e0e0e0;
+  }
+  100% {
+    background-color: #f0f0f0;
   }
 }
 </style>
