@@ -17,7 +17,9 @@ async function fetchTimetable() {
         "Zohar today",
         "Zohar tomorrow",
         "Asar today",
+        "Asar tomorrow",
         "Maghrib today",
+        "Maghrib tomorrow",
         "Isha today",
         "Jummah Khutbah",
       ].includes(entry.Name)
