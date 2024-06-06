@@ -28,8 +28,8 @@ const onSlideChange = (swiper) => {
 
 const swiperConfig = {
   autoplay: {
-   delay: 5000,
-   disableOnInteraction: false,
+    delay: 8000,
+    disableOnInteraction: false,
   },
   loop: true,
   slidesPerView: 1,
@@ -44,7 +44,11 @@ onMounted(fetchSlideshow);
     class="news-container"
     :style="{ backgroundColor: currentBackgroundColor }"
   >
-    <Swiper v-if="newsItems.length" v-bind="swiperConfig" @slideChange="onSlideChange">
+    <Swiper
+      v-if="newsItems.length"
+      v-bind="swiperConfig"
+      @slideChange="onSlideChange"
+    >
       <SwiperSlide v-for="(item, index) in newsItems" :key="index">
         <div class="news-item">
           <figure class="news-image">
@@ -75,7 +79,7 @@ onMounted(fetchSlideshow);
   text-align: center;
   gap: 1rem;
 
-  figure{
+  figure {
     margin: 0;
   }
 
